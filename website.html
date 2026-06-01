@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💕 For My Darling 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --rose: #ff4081;
+    --lavender: #c084fc;
+    --text: #4a1e3a;
+  }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body {
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(135deg,#ffe0eb 0%,#f8d7ff 50%,#ffe0eb 100%);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .hearts-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+  .heart-float{position:absolute;animation:floatUp linear infinite;opacity:0.45;}
+  @keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);opacity:0.45;}100%{transform:translateY(-10vh) rotate(360deg);opacity:0;}}
+
+  .screen{display:none;flex-direction:column;align-items:center;justify-content:center;z-index:10;position:relative;width:100%;max-width:480px;padding:1rem;}
+  .screen.active{display:flex;}
+  .card{
+    background:rgba(255,255,255,0.88);backdrop-filter:blur(20px);
+    border-radius:32px;padding:2.5rem 2rem;
+    box-shadow:0 20px 60px rgba(255,105,157,0.3),inset 0 1px 0 rgba(255,255,255,0.9);
+    border:2px solid rgba(255,255,255,0.7);text-align:center;width:100%;
+    animation:cardPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes cardPop{from{opacity:0;transform:scale(0.7) translateY(30px);}to{opacity:1;transform:scale(1) translateY(0);}}
+
+  /* ── CUTE ANIMATED ICON (replaces gif) ── */
+  .cute-icon{
+    width:110px;height:110px;border-radius:50%;margin:0 auto 1.2rem;
+    border:4px solid var(--pink);box-shadow:0 0 24px rgba(255,105,157,0.35);
+    display:flex;align-items:center;justify-content:center;
+    font-size:3.2rem;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,#fff0f5,#ffd6e8);
+  }
+  .cute-icon .main-emoji{display:inline-block;animation:bounce 1.4s ease-in-out infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-8px) scale(1.1);}}
+
+  /* sparkles around icon */
+  .cute-icon::before,.cute-icon::after{
+    content:'✨';position:absolute;font-size:1rem;
+    animation:sparkle 2s ease-in-out infinite;
+  }
+  .cute-icon::before{top:8px;right:8px;animation-delay:0s;}
+  .cute-icon::after{bottom:8px;left:8px;animation-delay:1s;}
+  @keyframes sparkle{0%,100%{opacity:0;transform:scale(0.5);}50%{opacity:1;transform:scale(1.2);}}
+
+  /* screen-specific icon styles */
+  #icon-passcode{background:linear-gradient(135deg,#e8d5ff,#ffd6e8);}
+  #icon-love{background:linear-gradient(135deg,#ffd6e8,#ffe8b0);}
+  #icon-meter{background:linear-gradient(135deg,#ffd6e8,#ffb3d1);}
+  #icon-letter{background:linear-gradient(135deg,#d5eeff,#ffd6e8);}
+
+  h1{font-family:'Caveat',cursive;font-size:2.2rem;color:var(--rose);margin-bottom:0.5rem;}
+  p.subtitle{color:#c47;font-size:0.95rem;margin-bottom:1.5rem;font-weight:600;}
+
+  /* PASSCODE */
+  .pin-display{display:flex;gap:12px;justify-content:center;margin-bottom:1.5rem;}
+  .pin-dot{width:18px;height:18px;border-radius:50%;background:#f0c;opacity:0.2;transition:all 0.3s;box-shadow:0 0 0 3px rgba(255,0,204,0.2);}
+  .pin-dot.filled{opacity:1;transform:scale(1.2);}
+  .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:240px;margin:0 auto;}
+  .key{
+    background:linear-gradient(135deg,#fff0f5,#ffd6e8);border:2px solid rgba(255,105,157,0.3);
+    border-radius:16px;padding:14px;font-size:1.4rem;font-weight:800;color:var(--rose);
+    cursor:pointer;transition:all 0.15s;font-family:'Nunito',sans-serif;
+  }
+  .key:hover{background:linear-gradient(135deg,#ffd6e8,#ffb3d1);transform:scale(1.05);}
+  .key:active{transform:scale(0.95);}
+  .key.del{font-size:1.1rem;}
+  .key.zero{grid-column:2;}
+  .shake{animation:shake 0.4s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+  .wrong-msg{color:#e74c3c;font-size:0.85rem;font-weight:700;margin-top:0.5rem;opacity:0;transition:opacity 0.3s;}
+  .wrong-msg.show{opacity:1;}
+
+  /* LOVE Q */
+  .big-question{font-family:'Caveat',cursive;font-size:2.5rem;color:var(--rose);margin:1rem 0;line-height:1.2;}
+  .btn-yes{
+    background:linear-gradient(135deg,#ff6b9d,#ff4081);color:white;border:none;
+    border-radius:50px;padding:14px 36px;font-size:1.2rem;font-weight:800;
+    cursor:pointer;font-family:'Nunito',sans-serif;
+    box-shadow:0 8px 25px rgba(255,64,129,0.4);transition:all 0.2s;margin:0.5rem;
+  }
+  .btn-yes:hover{transform:scale(1.05) translateY(-2px);}
+  .btn-no{
+    background:white;color:#c47;border:2px solid #ffc0d0;
+    border-radius:50px;padding:12px 28px;font-size:1.1rem;font-weight:700;
+    cursor:default;font-family:'Nunito',sans-serif;margin:0.5rem;
+    position:fixed;z-index:9999;user-select:none;transition:left 0.05s,top 0.05s;
+  }
+
+  /* METER */
+  .meter-label{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--rose);margin-bottom:1rem;}
+  .meter-container{background:#ffe0eb;border-radius:50px;height:36px;width:100%;overflow:hidden;border:3px solid var(--pink);position:relative;margin-bottom:1rem;}
+  .meter-fill{height:100%;background:linear-gradient(90deg,#ff6b9d,#ff4081,#c084fc);border-radius:50px;width:0%;position:relative;overflow:hidden;}
+  .meter-fill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);animation:shimmer 1.5s infinite;}
+  @keyframes shimmer{to{left:100%;}}
+  .meter-value{font-family:'Caveat',cursive;font-size:3rem;color:var(--rose);font-weight:700;}
+  .meter-status{font-size:1rem;color:#c47;font-weight:700;min-height:1.5rem;}
+  .infinity-display{display:none;font-family:'Caveat',cursive;font-size:4.5rem;color:var(--rose);animation:infPop 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes infPop{from{opacity:0;transform:scale(0);}to{opacity:1;transform:scale(1);}}
+  .crack-emoji{font-size:2rem;animation:wiggle 0.5s infinite alternate;}
+  @keyframes wiggle{from{transform:rotate(-5deg);}to{transform:rotate(5deg);}}
+
+  .btn-next{
+    background:linear-gradient(135deg,#c084fc,#ff6b9d);color:white;border:none;
+    border-radius:50px;padding:14px 40px;font-size:1.2rem;font-weight:800;
+    cursor:pointer;font-family:'Nunito',sans-serif;
+    box-shadow:0 8px 25px rgba(192,132,252,0.4);transition:all 0.2s;margin-top:1.5rem;display:none;
+  }
+  .btn-next:hover{transform:scale(1.05) translateY(-2px);}
+  .btn-next.show{display:inline-block;animation:cardPop 0.4s;}
+
+  /* LETTER */
+  .letter-paper{
+    background:rgba(255,255,255,0.95);border-radius:24px;padding:2rem;
+    box-shadow:0 20px 60px rgba(255,105,157,0.2);border:2px solid rgba(255,105,157,0.2);
+    max-height:65vh;overflow-y:auto;text-align:left;position:relative;
+  }
+  .letter-paper::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--pink),var(--lavender),var(--pink));border-radius:24px 24px 0 0;}
+  .letter-date{font-size:0.85rem;color:#c47;text-align:right;margin-bottom:1rem;font-weight:600;}
+  .letter-body{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--text);line-height:1.8;white-space:pre-wrap;}
+  .letter-sign{text-align:right;margin-top:1.5rem;font-family:'Caveat',cursive;font-size:1.4rem;color:var(--rose);font-weight:700;}
+
+  /* ADMIN */
+  #admin-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;align-items:center;justify-content:center;}
+  #admin-overlay.open{display:flex;}
+  .admin-card{background:white;border-radius:24px;padding:2rem;width:90%;max-width:520px;box-shadow:0 30px 80px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto;}
+  .admin-card h2{font-family:'Caveat',cursive;font-size:2rem;color:var(--rose);margin-bottom:0.5rem;text-align:center;}
+  .admin-hint{font-size:0.78rem;color:#aaa;text-align:center;margin-bottom:1.2rem;}
+  .admin-field{margin-bottom:1.2rem;}
+  .admin-field label{display:block;font-size:0.85rem;font-weight:700;color:#c47;margin-bottom:0.4rem;}
+  .admin-field textarea{width:100%;border:2px solid #ffc0d0;border-radius:12px;padding:0.8rem;font-family:'Caveat',cursive;font-size:1.1rem;color:var(--text);resize:vertical;min-height:180px;outline:none;transition:border-color 0.2s;}
+  .admin-field textarea:focus{border-color:var(--pink);}
+  .admin-save{background:linear-gradient(135deg,#ff6b9d,#c084fc);color:white;border:none;border-radius:50px;padding:12px 36px;font-size:1.1rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;margin-top:0.5rem;}
+  .admin-close{background:none;border:2px solid #ffc0d0;color:#c47;border-radius:50px;padding:10px 28px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;margin-top:0.8rem;}
+  .admin-saved-note{text-align:center;color:green;font-size:0.9rem;font-weight:700;margin-top:0.5rem;display:none;}
+
+  .confetti-piece{position:fixed;pointer-events:none;z-index:9000;animation:confettiFall 3s ease-in forwards;}
+  @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:#ffe0eb;border-radius:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--pink);border-radius:10px;}
+  @media(max-width:768px){#admin-overlay{display:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<!-- SCREEN 1: PASSCODE -->
+<div class="screen active" id="screen-passcode">
+  <div class="card">
+    <div class="cute-icon" id="icon-passcode">
+      <span class="main-emoji">🔐</span>
+    </div>
+    <h1>Secret Page 🔒</h1>
+    <p class="subtitle">Enter the passcode, cutie~ 🌸</p>
+    <div class="pin-display">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="keypad">
+      <button class="key" onclick="pressKey('1')">1</button>
+      <button class="key" onclick="pressKey('2')">2</button>
+      <button class="key" onclick="pressKey('3')">3</button>
+      <button class="key" onclick="pressKey('4')">4</button>
+      <button class="key" onclick="pressKey('5')">5</button>
+      <button class="key" onclick="pressKey('6')">6</button>
+      <button class="key" onclick="pressKey('7')">7</button>
+      <button class="key" onclick="pressKey('8')">8</button>
+      <button class="key" onclick="pressKey('9')">9</button>
+      <button class="key del" onclick="pressKey('del')">⌫</button>
+      <button class="key zero" onclick="pressKey('0')">0</button>
+    </div>
+    <div class="wrong-msg" id="wrongMsg">💔 Wrong code! Try again~</div>
+  </div>
+</div>
+
+<!-- SCREEN 2: LOVE QUESTION -->
+<div class="screen" id="screen-love">
+  <div class="card">
+    <div class="cute-icon" id="icon-love">
+      <span class="main-emoji">🥺</span>
+    </div>
+    <h1>💌 Hey there!</h1>
+    <div class="big-question">Do you love<br>Sohan? 🥺</div>
+    <p class="subtitle">Choose wisely~ your heart knows ✨</p>
+    <div>
+      <button class="btn-yes" onclick="answerYes()">Yes, forever! 💕</button>
+      <button class="btn-no" id="noBtn" onmouseenter="runAway(this)" onclick="return false">No 🙈</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: LOVE METER -->
+<div class="screen" id="screen-meter">
+  <div class="card">
+    <div class="cute-icon" id="icon-meter">
+      <span class="main-emoji" id="meterEmoji">💝</span>
+    </div>
+    <h1>💝 Love Meter</h1>
+    <p class="subtitle" id="meterSubtitle">Measuring the love… 🌸</p>
+    <div class="meter-label" id="meterLabelRow">Love Level: <span id="meterVal">0</span>%</div>
+    <div class="meter-container" id="meterContainer">
+      <div class="meter-fill" id="meterFill"></div>
+    </div>
+    <div class="meter-status" id="meterStatus">Warming up... 🌷</div>
+    <div class="infinity-display" id="infinityDisplay">
+      <div class="crack-emoji">💥</div>
+      ∞
+      <div style="font-size:1.1rem;color:#c47;margin-top:0.5rem;">The meter broke!<br>Love = <strong>INFINITY</strong> 💞</div>
+    </div>
+    <button class="btn-next" id="nextBtn" onclick="goToLetter()">Read My Letter 💌</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: LETTER -->
+<div class="screen" id="screen-letter">
+  <div class="card" style="max-width:480px;">
+    <div class="cute-icon" id="icon-letter" style="width:90px;height:90px;font-size:2.6rem;">
+      <span class="main-emoji">💌</span>
+    </div>
+    <h1>A Letter For You 💌</h1>
+    <div class="letter-paper">
+      <div class="letter-date" id="letterDate"></div>
+      <div class="letter-body" id="letterBody"></div>
+      <div class="letter-sign">With all my love 💕</div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-overlay">
+  <div class="admin-card">
+    <h2>🛠 Admin Panel</h2>
+    <p class="admin-hint">Ctrl+Shift+A · or type "love" on keyboard · Desktop only</p>
+    <div class="admin-field">
+      <label>✉️ Love Letter (shown to Sohan)</label>
+      <textarea id="adminLetter" rows="10" placeholder="Write your love letter here..."></textarea>
+    </div>
+    <button class="admin-save" onclick="saveAdmin()">💾 Save Changes</button>
+    <button class="admin-close" onclick="closeAdmin()">✖ Close</button>
+    <div class="admin-saved-note" id="savedNote">✅ Saved! Letter updated 💕</div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_LETTER = `My Darling,
+
+I do not think there will ever be enough words in this world for me to explain how much I love you because every time I try to describe my feelings for you it feels like my heart has so much more to say. You are the most precious person in my life and every day I find myself loving you more than I did the day before. Before you came into my life I never knew someone could become such an important part of my thoughts, my happiness, my dreams, and my future. Now it feels impossible to imagine a day without thinking about you because you are always on my mind from the moment I wake up until the moment I fall asleep. Sometimes I smile for no reason and then I realize I was thinking about you. Sometimes I hear a song and it reminds me of you. Sometimes I see something beautiful and my first thought is that I wish you were there with me to see it too. That is how much you mean to me.
+
+My Darling, you are the most beautiful part of my life and I do not mean only your beauty on the outside. I mean the beauty of your heart, your kindness, your smile, your laugh, your personality, and the way you make the people around you feel special. There is something about you that makes everything feel better. A bad day becomes easier when I talk to you. A stressful moment becomes lighter when I think about you. Even when I am tired or frustrated, hearing from you can completely change my mood. You have this amazing ability to bring happiness into my life without even trying. Just knowing that you exist and that I have the privilege of loving you is enough to make me grateful every single day.
+
+I love the way you smile. I love the way you talk. I love the way you laugh. I love the way you care about people. I love the way you make me feel important. I love the way you can make ordinary moments feel unforgettable. I love every little thing about you because every little thing is a part of the incredible person that you are. Even the things you might think are small become special to me because they belong to you. Every memory with you is a treasure I keep close to my heart and every conversation with you becomes something I replay in my mind because it makes me happy.
+
+Sometimes I wonder what I did to deserve someone as wonderful as you. Out of all the people in this world somehow our paths crossed and I will always be thankful for that. Meeting you was one of the greatest things that ever happened to me because you brought so much happiness into my life. You made me realize how beautiful it feels to truly care about someone. You showed me what it means to miss someone when they are not around and to feel excited just because their name appears on my screen. You became the person I want to tell everything to, the person whose opinion matters to me, and the person who makes my heart feel full.
+
+My Darling, if you could see yourself through my eyes for even a moment, you would understand why I love you so much. You would see someone who is beautiful, caring, kind, intelligent, strong, and absolutely irreplaceable. You would see someone who deserves all the happiness in the world. You would see someone who has become the most important person in my heart. I wish you could understand how special you are to me because then you would never doubt your value for even a second. You mean so much to me that sometimes just thinking about you makes me emotional because I cannot imagine my life without you.
+
+I want you to know that my love for you is not something temporary. It is not something that changes with moods or circumstances. It is something that grows stronger every day. Every conversation we have, every memory we create, every laugh we share, and every challenge we overcome together only makes my feelings for you deeper. I fall for you again and again in ways that are impossible to explain. It is in the little moments, the simple conversations, the random thoughts, and the memories that stay with me long after the day is over.
+
+When I think about my future, you are always there in my thoughts. I imagine celebrating happy moments with you. I imagine supporting each other through difficult times. I imagine creating countless memories together and looking back on them with smiles. I imagine continuing to learn more about you every day because no matter how much I know about you, I always want to know more. I want to hear about your dreams, your goals, your fears, your favorite memories, and every little thing that makes you who you are because everything about you matters to me.
+
+You are my comfort when life feels difficult. You are my happiness when life feels good. You are the reason behind so many of my smiles and so many of my favorite memories. You have become such an important part of my world that loving you feels as natural as breathing. It is not something I have to think about. It simply happens because my heart chose you and continues choosing you every single day.
+
+My Darling, there are millions of people in this world but none of them could ever replace you. Nobody has your smile. Nobody has your heart. Nobody has your personality. Nobody can make me feel the way you do. You are completely unique and that is one of the countless reasons why I treasure you so much. If I had to choose again and again, my choice would still be you every single time because you are the person who makes my life brighter and my heart happier.
+
+Thank you for every smile you have given me. Thank you for every laugh we have shared. Thank you for every moment you have spent with me. Thank you for your patience, your kindness, your care, and your love. Thank you for being the amazing person that you are. I appreciate you more than words could ever describe and I never want you to forget how important you are to me.
+
+No matter how much time passes, no matter how many days, months, or years go by, I want you to remember one thing. You are deeply loved. You are incredibly cherished. You are endlessly appreciated. You are one of the greatest blessings in my life and every day I thank fate for bringing you into my world. My heart belongs to you in a way that words will never fully explain and every beat of it carries a little more love for you than the one before.
+
+I love you when the days are easy and I love you when the days are hard. I love you in the quiet moments and in the exciting ones. I love you for who you are today and for who you will become tomorrow. I love your strengths and your imperfections because together they make you the wonderful person I adore. My love for you is filled with admiration, respect, gratitude, and endless affection.
+
+You will always be my Darling and I will always be
+
+Yours Honey ❤️`;
+
+function getLetter(){ return localStorage.getItem('sohan_letter') || DEFAULT_LETTER; }
+function saveLetter(v){ localStorage.setItem('sohan_letter', v); }
+
+// FLOATING HEARTS
+(function(){
+  const c=document.getElementById('heartsBg');
+  const e=['💕','💖','🌸','✨','💗','🌷','💝','🦋','🌺','⭐','🩷','🫶'];
+  for(let i=0;i<24;i++){
+    const h=document.createElement('span');
+    h.className='heart-float';
+    h.textContent=e[Math.floor(Math.random()*e.length)];
+    h.style.left=Math.random()*100+'vw';
+    h.style.animationDuration=(7+Math.random()*12)+'s';
+    h.style.animationDelay=(Math.random()*10)+'s';
+    h.style.fontSize=(1+Math.random()*1.5)+'rem';
+    c.appendChild(h);
+  }
+})();
+
+// PASSCODE
+let pin='';
+const CORRECT='0721';
+function pressKey(k){
+  if(k==='del'){pin=pin.slice(0,-1);updateDots();return;}
+  if(pin.length>=4)return;
+  pin+=k;updateDots();
+  if(pin.length===4)setTimeout(checkPin,200);
+}
+function updateDots(){
+  for(let i=0;i<4;i++) document.getElementById('d'+i).classList.toggle('filled',i<pin.length);
+}
+function checkPin(){
+  if(pin===CORRECT){goTo('screen-love');}
+  else{
+    const card=document.querySelector('#screen-passcode .card');
+    card.classList.add('shake');
+    document.getElementById('wrongMsg').classList.add('show');
+    setTimeout(()=>card.classList.remove('shake'),400);
+    setTimeout(()=>{document.getElementById('wrongMsg').classList.remove('show');pin='';updateDots();},1500);
+    pin='';
+  }
+}
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function runAway(btn){
+  const maxX=window.innerWidth-120,maxY=window.innerHeight-60;
+  btn.style.left=Math.max(10,Math.random()*maxX)+'px';
+  btn.style.top=Math.max(10,Math.random()*maxY)+'px';
+}
+
+function answerYes(){
+  launchConfetti();
+  setTimeout(()=>{goTo('screen-meter');startMeter();},400);
+}
+
+function launchConfetti(){
+  const colors=['#ff6b9d','#c084fc','#fbbf24','#34d399','#60a5fa','#f472b6','#fde68a'];
+  for(let i=0;i<70;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    const size=6+Math.random()*10;
+    p.style.cssText=`left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*1.2}s;animation-duration:${2+Math.random()*2}s;border-radius:${Math.random()>0.5?'50%':'2px'};width:${size}px;height:${size}px;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),4500);
+  }
+}
+
+// METER
+const msgs=[
+  {v:10,m:'💓 It\'s sparking...'},
+  {v:25,m:'💗 Feelings detected!'},
+  {v:40,m:'🌸 So much warmth~'},
+  {v:55,m:'💕 Love is growing fast!'},
+  {v:70,m:'💖 Overflowing heart!'},
+  {v:85,m:'🌺 Maximum sweetness!'},
+  {v:95,m:'💝 Off the charts!'},
+  {v:100,m:'💥 METER EXPLODING!!!'}
+];
+const meterEmojis=['💓','💗','💕','💖','💝','🌺','🫶','💘'];
+function startMeter(){
+  let cur=0;
+  const fill=document.getElementById('meterFill');
+  const val=document.getElementById('meterVal');
+  const status=document.getElementById('meterStatus');
+  const emojiEl=document.getElementById('meterEmoji');
+  const iv=setInterval(()=>{
+    if(cur>=100){clearInterval(iv);setTimeout(breakMeter,600);return;}
+    cur++;
+    fill.style.width=cur+'%';
+    val.textContent=cur;
+    emojiEl.textContent=meterEmojis[Math.floor(cur/13)]||'💘';
+    for(const m of msgs){if(cur===m.v){status.textContent=m.m;break;}}
+  },38);
+}
+function breakMeter(){
+  const mc=document.getElementById('meterContainer');
+  let shakes=0;
+  const sv=setInterval(()=>{
+    mc.style.transform=shakes%2===0?'translateX(-8px)':'translateX(8px)';
+    shakes++;
+    if(shakes>8){clearInterval(sv);mc.style.transform='';}
+  },60);
+  setTimeout(()=>{
+    mc.style.display='none';
+    document.getElementById('meterLabelRow').style.display='none';
+    document.getElementById('meterStatus').style.display='none';
+    document.getElementById('meterSubtitle').textContent='The love is too big to measure! 💥';
+    document.getElementById('infinityDisplay').style.display='block';
+    document.getElementById('meterEmoji').textContent='🫶';
+    launchConfetti();
+    document.getElementById('nextBtn').classList.add('show');
+  },700);
+}
+
+function goToLetter(){
+  goTo('screen-letter');
+  const now=new Date();
+  document.getElementById('letterDate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('letterBody').textContent=getLetter();
+}
+
+// ADMIN — Ctrl+Shift+A
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey && e.shiftKey && (e.key==='A'||e.key==='a')){
+    e.preventDefault();openAdmin();
+  }
+});
+// backup: type "love"
+let adminTyped='';
+document.addEventListener('keydown',function(e){
+  if(e.ctrlKey||e.altKey||e.metaKey)return;
+  adminTyped+=e.key.toLowerCase();
+  if(adminTyped.length>4)adminTyped=adminTyped.slice(-4);
+  if(adminTyped==='love'){adminTyped='';openAdmin();}
+});
+
+function openAdmin(){
+  if(window.innerWidth<=768)return;
+  document.getElementById('adminLetter').value=getLetter();
+  document.getElementById('admin-overlay').classList.add('open');
+}
+function closeAdmin(){
+  document.getElementById('admin-overlay').classList.remove('open');
+  document.getElementById('savedNote').style.display='none';
+}
+function saveAdmin(){
+  const val=document.getElementById('adminLetter').value;
+  saveLetter(val);
+  document.getElementById('savedNote').style.display='block';
+  document.getElementById('letterBody').textContent=val;
+  setTimeout(()=>{document.getElementById('savedNote').style.display='none';},2500);
+}
+document.getElementById('admin-overlay').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
+</script>
+</body>
+</html>
